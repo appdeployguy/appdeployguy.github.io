@@ -1,0 +1,153 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const slugify = (value: string) =>
+  value.toLowerCase().trim().replace(/\s+/g, '-');
+
+const formatDate = (value: Date) =>
+  value.toLocaleDateString('en-NZ', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+const posts = (await getCollection('posts'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const categoryMap = new Map<
+  string,
+  {
+    slug: string;
+    count: number;
+    latestDate: Date;
+  }
+>();
+
+for (const post of posts) {
+  for (const category of post.data.categories ?? []) {
+    const existing = categoryMap.get(category);
+
+    if (existing) {
+      existing.count += 1;
+      if (post.data.date > existing.latestDate) {
+        existing.latestDate = post.data.date;
+      }
+    } else {
+      categoryMap.set(category, {
+        slug: slugify(category),
+        count: 1,
+        latestDate: post.data.date,
+      });
+    }
+  }
+}
+
+const categories = [...categoryMap.entries()]
+  .map(([name, info]) => ({
+    name,
+    ...info,
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+---
+
+<BaseLayout
+  pageTitle="Categories"
+  metaTitle="Categories | AppDeploy Guy"
+  metaDescription="Browse posts by category."
+  activeNav="categories"
+>
+  <style>
+    .categories-page {
+      padding: 1.3rem 2.3rem 1.25rem;
+    }
+
+    .categories-shell {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .category-card {
+      display: block;
+      background: color-mix(in srgb, var(--surface) 88%, var(--bg));
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1rem 1.05rem;
+      transition: transform 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--surface) 80%, var(--nav-active));
+    }
+
+    .category-card-title {
+      margin: 0 0 0.4rem;
+      color: var(--text);
+      font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .category-card-meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+    }
+
+    .empty-state {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.7;
+    }
+
+    @media (max-width: 900px) {
+      .categories-page {
+        padding: 1.25rem 0 0;
+      }
+    }
+  </style>
+
+  <div class="categories-page">
+    <div class="categories-shell">
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <li><a href="/">Home</a></li>
+          <li class="breadcrumb-separator" aria-hidden="true">›</li>
+          <li aria-current="page">Categories</li>
+        </ol>
+      </nav>
+
+      <section class="page-card">
+        <header class="page-header">
+          <h1>Categories</h1>
+          <p>Browse posts by topic.</p>
+        </header>
+
+        {categories.length > 0 ? (
+          <div class="category-grid">
+            {categories.map((category) => (
+              <a class="category-card" href={`/categories/${category.slug}/`}>
+                <h2 class="category-card-title">{category.name}</h2>
+                <p class="category-card-meta">
+                  {category.count} post{category.count === 1 ? '' : 's'} · Last updated {formatDate(category.latestDate)}
+                </p>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="empty-state">No categories have been added yet.</p>
+        )}
+      </section>
+    </div>
+  </div>
+</BaseLayout>

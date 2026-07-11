@@ -1,17 +1,132 @@
 ---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
 
+const siteTitle = 'AppDeploy Guy';
+const siteDescription = 'Application Packaging & Deployment | Intune | SCCM | PowerShell';
+
+const allPosts = await getCollection('posts');
+const posts = allPosts
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .map(post => ({
+    title: post.data.title,
+    date: post.data.date.toLocaleDateString('en-NZ', { year: 'numeric', month: 'long', day: 'numeric' }),
+    category: (post.data.categories ?? []).join(', '),
+    excerpt: post.data.description,
+    href: `/posts/${post.id}`,
+  }));
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout
+  pageTitle="Home"
+  metaTitle={siteTitle}
+  metaDescription={siteDescription}
+  activeNav="home"
+>
+  <style>
+    .home-page {
+      padding: 1.3rem 2.3rem 1.25rem;
+    }
+
+    .home-shell {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    .post-list {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .post-card-link {
+      display: block;
+      color: inherit;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .post-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow);
+      transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .post-card-link:hover .post-card {
+      background: var(--nav-active);
+      transform: translateY(-2px);
+    }
+
+    .post-card-link:focus-visible .post-card {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+    }
+
+    .post-card h2 {
+      margin: 0 0 0.75rem;
+      font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+      font-size: 1.9rem;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.2;
+    }
+
+    .post-card p {
+      margin: 0 0 1.15rem;
+      color: var(--muted);
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    .post-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .post-meta span {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    @media (max-width: 900px) {
+      .home-page {
+        padding: 1.25rem 0 0;
+      }
+
+      .post-card {
+        padding: 1.25rem;
+      }
+    }
+  </style>
+
+  <div class="home-page">
+    <div class="home-shell">
+      <nav aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <li aria-current="page">Home</li>
+        </ol>
+      </nav>
+
+      <div class="post-list">
+        {posts.map((post) => (
+          <a class="post-card-link" href={post.href} data-pagefind-ignore>
+            <article class="post-card">
+              <h2 data-pagefind-meta="title">{post.title}</h2>
+              <p data-pagefind-meta="description">{post.excerpt}</p>
+              <div class="post-meta" data-pagefind-ignore>
+                <span><i class="fa-regular fa-calendar"></i> {post.date}</span>
+                <span><i class="fa-regular fa-folder-open"></i> {post.category}</span>
+              </div>
+            </article>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,981 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  pageTitle: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  activeNav?: 'home' | 'categories' | 'about';
+}
+
+const {
+  pageTitle,
+  metaTitle = 'AppDeploy Guy',
+  metaDescription = 'Application Packaging & Deployment | Intune | SCCM | PowerShell',
+  activeNav = 'home',
+} = Astro.props;
+
+const siteTitle = 'AppDeploy Guy';
+const siteDescription = 'Application Packaging & Deployment | Intune | SCCM | PowerShell';
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{metaTitle}</title>
+    <meta name="description" content={metaDescription} />
+
+    <link rel="canonical" href={canonicalURL} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={metaTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={metaTitle} />
+    <meta name="twitter:description" content={metaDescription} />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        color-scheme: light dark;
+        --bg: #f7f7f8;
+        --sidebar-bg: #f2f3f5;
+        --surface: #ffffff;
+        --text: #4e4e4e;
+        --muted: #7b7b7b;
+        --line: #e7e7e7;
+        --accent: #a65b3a;
+        --nav-active: #e5e9ef;
+        --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+        --mobile-header-height: 64px;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #1b1d22;
+          --sidebar-bg: #23262d;
+          --surface: #2a2e36;
+          --text: #e7e7e7;
+          --muted: #b5b5b5;
+          --line: #3a3f48;
+          --accent: #d08a67;
+          --nav-active: #313743;
+          --shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+        }
+      }
+
+      :root[data-theme="light"] {
+        color-scheme: light;
+        --bg: #f7f7f8;
+        --sidebar-bg: #f2f3f5;
+        --surface: #ffffff;
+        --text: #4e4e4e;
+        --muted: #7b7b7b;
+        --line: #e7e7e7;
+        --accent: #a65b3a;
+        --nav-active: #e5e9ef;
+        --shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      }
+
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #1b1d22;
+        --sidebar-bg: #23262d;
+        --surface: #2a2e36;
+        --text: #e7e7e7;
+        --muted: #b5b5b5;
+        --line: #3a3f48;
+        --accent: #d08a67;
+        --nav-active: #313743;
+        --shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        min-height: 100%;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      body.menu-open {
+        overflow: hidden;
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      .mobile-header {
+        display: none;
+      }
+
+      .mobile-menu-overlay {
+        display: none;
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 260px;
+        min-width: 260px;
+        height: 100dvh;
+        position: sticky;
+        top: 0;
+        overflow-y: auto;
+        background: var(--sidebar-bg);
+        border-right: 1px solid var(--line);
+        padding: 2rem 1.5rem;
+        display: flex;
+        flex-direction: column;
+        z-index: 40;
+      }
+
+      .sidebar-header-mobile {
+        display: none;
+      }
+
+      .brand {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin-bottom: 2rem;
+      }
+
+      .logo-circle {
+        width: 112px;
+        height: 112px;
+        border-radius: 50%;
+        background: #c8d8f7;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1.2rem;
+        overflow: hidden;
+        transition: transform 0.2s ease;
+      }
+
+      .logo-circle img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .logo-circle:hover {
+        transform: scale(1.06);
+      }
+
+      .brand h1 {
+        margin: 0 0 0.9rem;
+        font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+        font-size: 1rem;
+        font-weight: 900;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
+        color: var(--text);
+      }
+
+      .brand p {
+        margin: 0;
+        color: var(--muted);
+        font-style: italic;
+        font-size: 0.88rem;
+        line-height: 1.8;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
+
+      .sidebar-search {
+        display: none;
+        margin-bottom: 1.5rem;
+      }
+
+      .search-shell {
+        position: relative;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+      }
+
+      .search-shell:focus-within {
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent);
+      }
+
+      .search-icon {
+        position: absolute;
+        left: 0.95rem;
+        color: var(--muted);
+        font-size: 0.9rem;
+        pointer-events: none;
+      }
+
+      .search-input {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text);
+        padding: 0.82rem 1rem 0.82rem 2.6rem;
+        font-size: 0.94rem;
+      }
+
+      .search-input::placeholder {
+        color: var(--muted);
+      }
+
+      .search-results {
+        margin-top: 0.65rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+
+      .search-result-link {
+        display: block;
+        padding: 0.85rem 1rem;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .search-result-link:last-child {
+        border-bottom: 0;
+      }
+
+      .search-result-link:hover {
+        background: var(--nav-active);
+      }
+
+      .search-result-title {
+        display: block;
+        color: var(--text);
+        font-size: 0.92rem;
+        font-weight: 600;
+        line-height: 1.35;
+        margin-bottom: 0.3rem;
+      }
+
+      .search-result-meta {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.45;
+        text-decoration: none;
+      }
+
+      .sidebar nav {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        margin-top: 0;
+      }
+
+      .sidebar-bottom {
+        margin-top: auto;
+        padding-top: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+      }
+
+      .sidebar-icon-btn,
+      .mobile-menu-btn,
+      .mobile-close-btn {
+        width: 40px;
+        height: 40px;
+        border: 0;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+        font-size: 1rem;
+        transition: background-color 0.2s ease, color 0.2s ease;
+      }
+
+      .sidebar-icon-btn:hover,
+      .mobile-menu-btn:hover,
+      .mobile-close-btn:hover {
+        background: var(--nav-active);
+        color: var(--text);
+      }
+
+      .theme-switcher {
+        position: relative;
+      }
+
+      .theme-menu[hidden] {
+        display: none !important;
+      }
+
+      .theme-menu {
+        position: absolute;
+        left: 0;
+        bottom: calc(100% + 10px);
+        min-width: 140px;
+        padding: 0.3rem;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        z-index: 100;
+      }
+
+      .theme-option {
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--text);
+        border-radius: 10px;
+        padding: 0.7rem 0.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .theme-option:hover {
+        background: var(--nav-active);
+      }
+
+      .theme-option-left {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.65rem;
+        color: var(--muted);
+        font-size: 0.94rem;
+      }
+
+      .theme-option.is-active {
+        background: var(--nav-active);
+      }
+
+      .theme-option.is-active .theme-option-left {
+        color: var(--text);
+      }
+
+      .theme-check {
+        opacity: 0;
+        font-size: 0.82rem;
+        color: var(--muted);
+      }
+
+      .theme-option.is-active .theme-check {
+        opacity: 1;
+      }
+
+      .nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.95rem 1rem;
+        border-radius: 14px;
+        color: var(--text);
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+      }
+
+      .nav-link:hover,
+      .nav-link.active {
+        background: var(--nav-active);
+      }
+
+      .nav-icon {
+        width: 20px;
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.92rem;
+        opacity: 0.9;
+      }
+
+      .content {
+        flex: 1;
+        min-width: 0;
+        padding: 1.3rem 2.3rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .site-footer {
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--line);
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .site-footer strong {
+        color: var(--text);
+        font-weight: 500;
+      }
+
+      @media (max-width: 900px) {
+        .mobile-header {
+          position: sticky;
+          top: 0;
+          z-index: 45;
+          height: var(--mobile-header-height);
+          display: grid;
+          grid-template-columns: 48px 1fr 48px;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0 0.85rem;
+          background: color-mix(in srgb, var(--bg) 88%, transparent);
+          backdrop-filter: blur(14px);
+          -webkit-backdrop-filter: blur(14px);
+          border-bottom: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+        }
+
+        .mobile-header-title {
+          text-align: center;
+          font-family: "Montserrat", "Segoe UI", Arial, sans-serif;
+          font-size: 1.05rem;
+          font-weight: 800;
+          color: var(--text);
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .mobile-menu-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(8, 10, 16, 0.56);
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transition: opacity 0.25s ease, visibility 0.25s ease;
+          z-index: 46;
+          display: block;
+          backdrop-filter: blur(2px);
+          -webkit-backdrop-filter: blur(2px);
+        }
+
+        .mobile-menu-overlay.is-open {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+
+        .layout {
+          display: block;
+          min-height: calc(100vh - var(--mobile-header-height));
+        }
+
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: min(82vw, 300px);
+          min-width: 0;
+          height: 100dvh;
+          border-right: 1px solid color-mix(in srgb, var(--line) 85%, white 15%);
+          border-bottom: 0;
+          transform: translateX(-100%);
+          transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+          box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
+          z-index: 50;
+          padding: 1.35rem 1.1rem 1.5rem;
+        }
+
+        .sidebar.is-open {
+          transform: translateX(0);
+        }
+
+        .sidebar-header-mobile {
+          display: flex;
+          justify-content: flex-end;
+          margin: -0.35rem -0.15rem 1rem;
+        }
+
+        .theme-menu {
+          left: auto;
+          right: 0;
+        }
+
+        .content {
+          min-height: calc(100vh - var(--mobile-header-height));
+          padding: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="mobile-header">
+      <button
+        class="mobile-menu-btn"
+        type="button"
+        aria-label="Open navigation menu"
+        aria-controls="site-sidebar"
+        aria-expanded="false"
+      >
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div class="mobile-header-title">{siteTitle}</div>
+
+      <div aria-hidden="true"></div>
+    </header>
+
+    <button
+      class="mobile-menu-overlay"
+      type="button"
+      aria-label="Close navigation menu"
+      tabindex="-1"
+    ></button>
+
+    <div class="layout">
+      <aside
+        class="sidebar"
+        id="site-sidebar"
+        aria-label="Primary"
+      >
+        <div class="sidebar-header-mobile">
+          <button
+            class="mobile-close-btn"
+            type="button"
+            aria-label="Close navigation menu"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+
+        <div class="brand">
+          <a href="/" class="logo-circle" aria-label="Home">
+            <img src="/images/avatar.png" alt="AppDeploy Guy avatar" />
+          </a>
+          <h1>{siteTitle}</h1>
+          <p>{siteDescription}</p>
+        </div>
+
+        <form class="sidebar-search" role="search">
+          <label class="sr-only" for="site-search">Search posts</label>
+          <div class="search-shell">
+            <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+            <input
+              id="site-search"
+              class="search-input"
+              type="search"
+              placeholder="Search..."
+              autocomplete="off"
+            />
+          </div>
+          <div class="search-results" id="search-results" hidden></div>
+        </form>
+
+        <nav>
+          <a class:list={['nav-link', activeNav === 'home' && 'active']} href="/">
+            <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+            <span>HOME</span>
+          </a>
+          <a class:list={['nav-link', activeNav === 'categories' && 'active']} href="/categories/">
+            <span class="nav-icon"><i class="fa-solid fa-bars"></i></span>
+            <span>CATEGORIES</span>
+          </a>
+          <a class:list={['nav-link', activeNav === 'about' && 'active']} href="/about/">
+            <span class="nav-icon"><i class="fa-solid fa-circle-info"></i></span>
+            <span>ABOUT</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="theme-switcher">
+            <button
+              class="sidebar-icon-btn theme-toggle"
+              type="button"
+              aria-label="Open theme menu"
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="theme-menu"
+            >
+              <i class="fa-regular fa-sun"></i>
+            </button>
+
+            <div class="theme-menu" id="theme-menu" hidden>
+              <button class="theme-option" type="button" data-theme="light">
+                <span class="theme-option-left">
+                  <i class="fa-regular fa-sun"></i>
+                  <span>Light</span>
+                </span>
+                <i class="fa-solid fa-check theme-check"></i>
+              </button>
+
+              <button class="theme-option" type="button" data-theme="dark">
+                <span class="theme-option-left">
+                  <i class="fa-regular fa-moon"></i>
+                  <span>Dark</span>
+                </span>
+                <i class="fa-solid fa-check theme-check"></i>
+              </button>
+
+              <button class="theme-option" type="button" data-theme="system">
+                <span class="theme-option-left">
+                  <span>System</span>
+                </span>
+                <i class="fa-solid fa-check theme-check"></i>
+              </button>
+            </div>
+          </div>
+
+          <a
+            class="sidebar-icon-btn"
+            href="https://github.com/appdeployguy"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+          >
+            <i class="fa-brands fa-github"></i>
+          </a>
+
+          <a
+            class="sidebar-icon-btn"
+            href="https://www.linkedin.com/in/jeremyboyes/"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="LinkedIn"
+          >
+            <i class="fa-brands fa-linkedin-in"></i>
+          </a>
+        </div>
+      </aside>
+
+      <main class="content">
+        <slot />
+        <footer class="site-footer">
+          <p>© {new Date().getFullYear()} <strong>Jeremy Boyes</strong>. Some rights reserved.</p>
+        </footer>
+      </main>
+    </div>
+
+    <script type="module" is:inline>
+      const root = document.documentElement;
+      const body = document.body;
+      const themeToggle = document.querySelector('.theme-toggle');
+      const themeToggleIcon = themeToggle?.querySelector('i');
+      const themeMenu = document.querySelector('.theme-menu');
+      const themeOptions = document.querySelectorAll('.theme-option');
+      const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+      const searchForm = document.querySelector('.sidebar-search');
+      const searchInput = document.querySelector('#site-search');
+      const resultsContainer = document.querySelector('#search-results');
+
+      const mobileMenuButton = document.querySelector('.mobile-menu-btn');
+      const mobileCloseButton = document.querySelector('.mobile-close-btn');
+      const mobileOverlay = document.querySelector('.mobile-menu-overlay');
+      const sidebar = document.querySelector('.sidebar');
+      const sidebarNavLinks = document.querySelectorAll('.sidebar nav a');
+      const mobileBreakpoint = window.matchMedia('(max-width: 900px)');
+
+      let selectedTheme = null;
+      let searchTimer;
+      let isMenuOpen = false;
+
+      try {
+        selectedTheme = localStorage.getItem('theme');
+      } catch {
+        selectedTheme = null;
+      }
+
+      if (selectedTheme === 'system') {
+        selectedTheme = null;
+      }
+
+      function safeSetTheme(value) {
+        try {
+          localStorage.setItem('theme', value);
+        } catch {}
+      }
+
+      function applyTheme(theme = null) {
+        selectedTheme = theme;
+
+        const resolvedTheme =
+          theme === null
+            ? (systemTheme.matches ? 'dark' : 'light')
+            : theme;
+
+        if (theme === null) {
+          root.removeAttribute('data-theme');
+          safeSetTheme('system');
+        } else {
+          root.setAttribute('data-theme', theme);
+          safeSetTheme(theme);
+        }
+
+        themeOptions.forEach((option) => {
+          const optionTheme = option.dataset.theme;
+          const isActive =
+            selectedTheme === null
+              ? optionTheme === 'system'
+              : optionTheme === selectedTheme;
+
+          option.classList.toggle('is-active', isActive);
+        });
+
+        if (themeToggleIcon) {
+          themeToggleIcon.className =
+            resolvedTheme === 'light'
+              ? 'fa-regular fa-sun'
+              : 'fa-regular fa-moon';
+        }
+
+        themeToggle?.setAttribute(
+          'aria-label',
+          selectedTheme === null
+            ? `Current theme follows system (${resolvedTheme})`
+            : `Current theme: ${selectedTheme.charAt(0).toUpperCase() + selectedTheme.slice(1)}`
+        );
+      }
+
+      function openThemeMenu() {
+        if (!themeMenu) return;
+        themeMenu.hidden = false;
+        themeToggle?.setAttribute('aria-expanded', 'true');
+      }
+
+      function closeThemeMenu() {
+        if (!themeMenu) return;
+        themeMenu.hidden = true;
+        themeToggle?.setAttribute('aria-expanded', 'false');
+      }
+
+      function syncMenuButton() {
+        mobileMenuButton?.setAttribute('aria-expanded', String(isMenuOpen));
+      }
+
+      function openMobileMenu() {
+        if (!mobileBreakpoint.matches) return;
+        isMenuOpen = true;
+        sidebar?.classList.add('is-open');
+        mobileOverlay?.classList.add('is-open');
+        body.classList.add('menu-open');
+        syncMenuButton();
+      }
+
+      function closeMobileMenu() {
+        isMenuOpen = false;
+        sidebar?.classList.remove('is-open');
+        mobileOverlay?.classList.remove('is-open');
+        body.classList.remove('menu-open');
+        syncMenuButton();
+      }
+
+      function toggleMobileMenu() {
+        if (isMenuOpen) {
+          closeMobileMenu();
+        } else {
+          openMobileMenu();
+        }
+      }
+
+      async function loadPagefind() {
+        const pagefind = await import(/* @vite-ignore */ '/pagefind/pagefind.js');
+        await pagefind.init?.();
+        return pagefind;
+      }
+
+      function clearSearchResults() {
+        if (!resultsContainer) return;
+        resultsContainer.innerHTML = '';
+        resultsContainer.hidden = true;
+      }
+
+      function stripHtml(value = '') {
+        return value.replace(/<[^>]*>/g, '').trim();
+      }
+
+      async function runSearch(term) {
+        const query = term.trim();
+
+        if (!query || !resultsContainer) {
+          clearSearchResults();
+          return;
+        }
+
+        try {
+          const pagefind = await loadPagefind();
+          const search = await pagefind.search(query);
+          const items = await Promise.all(
+            search.results.slice(0, 5).map((result) => result.data())
+          );
+
+          if (!items.length) {
+            resultsContainer.innerHTML = `
+              <div class="search-result-link">
+                <span class="search-result-title">No results found</span>
+                <span class="search-result-meta">Try another keyword.</span>
+              </div>
+            `;
+            resultsContainer.hidden = false;
+            return;
+          }
+
+          resultsContainer.innerHTML = items.map((item) => {
+            const title = item.meta?.title || 'Untitled';
+            const metaText =
+              item.meta?.description ||
+              stripHtml(item.excerpt || '') ||
+              'Open post';
+
+            return `
+              <a class="search-result-link" href="${item.url}">
+                <span class="search-result-title">${title}</span>
+                <span class="search-result-meta">${metaText}</span>
+              </a>
+            `;
+          }).join('');
+
+          resultsContainer.hidden = false;
+        } catch (error) {
+          clearSearchResults();
+          console.error('Search failed:', error);
+        }
+      }
+
+      themeToggle?.addEventListener('click', (event) => {
+        event.stopPropagation();
+
+        if (themeMenu?.hidden) {
+          openThemeMenu();
+        } else {
+          closeThemeMenu();
+        }
+      });
+
+      themeOptions.forEach((option) => {
+        option.addEventListener('click', () => {
+          const value = option.dataset.theme;
+          applyTheme(value === 'system' ? null : value);
+          closeThemeMenu();
+        });
+      });
+
+      systemTheme.addEventListener('change', () => {
+        if (selectedTheme === null) {
+          applyTheme(null);
+        }
+      });
+
+      searchForm?.addEventListener('submit', (event) => {
+        event.preventDefault();
+        runSearch(searchInput?.value ?? '');
+      });
+
+      searchInput?.addEventListener('input', () => {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => runSearch(searchInput.value), 180);
+      });
+
+      searchInput?.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          searchInput.blur();
+          clearSearchResults();
+        }
+      });
+
+      mobileMenuButton?.addEventListener('click', () => {
+        toggleMobileMenu();
+      });
+
+      mobileCloseButton?.addEventListener('click', () => {
+        closeMobileMenu();
+      });
+
+      mobileOverlay?.addEventListener('click', () => {
+        closeMobileMenu();
+      });
+
+      sidebarNavLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+          closeMobileMenu();
+        });
+      });
+
+      mobileBreakpoint.addEventListener('change', (event) => {
+        if (!event.matches) {
+          closeMobileMenu();
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.theme-switcher')) {
+          closeThemeMenu();
+        }
+
+        if (!event.target.closest('.sidebar-search')) {
+          clearSearchResults();
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          closeThemeMenu();
+          closeMobileMenu();
+          clearSearchResults();
+        }
+      });
+
+      applyTheme(selectedTheme);
+      syncMenuButton();
+    </script>
+  </body>
+</html>
