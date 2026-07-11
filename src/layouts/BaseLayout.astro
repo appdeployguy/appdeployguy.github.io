@@ -25,7 +25,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
     <title>{metaTitle}</title>
     <meta name="description" content={metaDescription} />
@@ -147,13 +147,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       .sidebar {
         width: 260px;
         min-width: 260px;
+        height: 100vh;
         height: 100dvh;
         position: sticky;
         top: 0;
-        overflow-y: auto;
+        overflow: visible;
         background: var(--sidebar-bg);
         border-right: 1px solid var(--line);
-        padding: 2rem 1.5rem;
+        padding: 2rem 1.5rem 2rem;
         display: flex;
         flex-direction: column;
         z-index: 40;
@@ -161,6 +162,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
       .sidebar-header-mobile {
         display: none;
+      }
+
+      .sidebar-main {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: visible;
+        overscroll-behavior: contain;
       }
 
       .brand {
@@ -320,8 +329,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       }
 
       .sidebar-bottom {
-        margin-top: auto;
-        padding-top: 1.5rem;
+        flex: 0 0 auto;
+        margin-top: 0;
+        padding-top: 1rem;
+        padding-bottom: env(safe-area-inset-bottom);
         display: flex;
         align-items: center;
         gap: 0.9rem;
@@ -364,6 +375,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         left: 0;
         bottom: calc(100% + 10px);
         min-width: 140px;
+        max-width: min(220px, calc(100vw - 2rem));
         padding: 0.3rem;
         border: 1px solid var(--line);
         border-radius: 14px;
@@ -526,6 +538,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           left: 0;
           width: min(82vw, 300px);
           min-width: 0;
+          height: 100vh;
           height: 100dvh;
           border-right: 1px solid color-mix(in srgb, var(--line) 85%, white 15%);
           border-bottom: 0;
@@ -533,7 +546,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
           box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
           z-index: 50;
-          padding: 1.35rem 1.1rem 1.5rem;
+          padding: 1rem 1rem 1rem;
         }
 
         .sidebar.is-open {
@@ -543,12 +556,33 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         .sidebar-header-mobile {
           display: flex;
           justify-content: flex-end;
-          margin: -0.35rem -0.15rem 1rem;
+          margin: -0.25rem -0.1rem 0.75rem;
+          flex: 0 0 auto;
+        }
+
+        .logo-circle {
+          width: 88px;
+          height: 88px;
+        }
+
+        .brand {
+          margin-bottom: 1.25rem;
+        }
+
+        .brand p {
+          font-size: 0.82rem;
+          line-height: 1.6;
+        }
+
+        .sidebar nav {
+          gap: 0.2rem;
         }
 
         .theme-menu {
-          left: auto;
-          right: 0;
+          left: 0.25rem;
+          right: auto;
+          bottom: calc(100% + 12px);
+          transform-origin: bottom left;
         }
 
         .content {
@@ -598,43 +632,45 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
           </button>
         </div>
 
-        <div class="brand">
-          <a href="/" class="logo-circle" aria-label="Home">
-            <img src="/images/avatar.png" alt="AppDeploy Guy avatar" />
-          </a>
-          <h1>{siteTitle}</h1>
-          <p>{siteDescription}</p>
-        </div>
-
-        <form class="sidebar-search" role="search">
-          <label class="sr-only" for="site-search">Search posts</label>
-          <div class="search-shell">
-            <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
-            <input
-              id="site-search"
-              class="search-input"
-              type="search"
-              placeholder="Search..."
-              autocomplete="off"
-            />
+        <div class="sidebar-main">
+          <div class="brand">
+            <a href="/" class="logo-circle" aria-label="Home">
+              <img src="/images/avatar.png" alt="AppDeploy Guy avatar" />
+            </a>
+            <h1>{siteTitle}</h1>
+            <p>{siteDescription}</p>
           </div>
-          <div class="search-results" id="search-results" hidden></div>
-        </form>
 
-        <nav>
-          <a class:list={['nav-link', activeNav === 'home' && 'active']} href="/">
-            <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
-            <span>HOME</span>
-          </a>
-          <a class:list={['nav-link', activeNav === 'categories' && 'active']} href="/categories/">
-            <span class="nav-icon"><i class="fa-solid fa-bars"></i></span>
-            <span>CATEGORIES</span>
-          </a>
-          <a class:list={['nav-link', activeNav === 'about' && 'active']} href="/about/">
-            <span class="nav-icon"><i class="fa-solid fa-circle-info"></i></span>
-            <span>ABOUT</span>
-          </a>
-        </nav>
+          <form class="sidebar-search" role="search">
+            <label class="sr-only" for="site-search">Search posts</label>
+            <div class="search-shell">
+              <i class="fa-solid fa-magnifying-glass search-icon" aria-hidden="true"></i>
+              <input
+                id="site-search"
+                class="search-input"
+                type="search"
+                placeholder="Search..."
+                autocomplete="off"
+              />
+            </div>
+            <div class="search-results" id="search-results" hidden></div>
+          </form>
+
+          <nav>
+            <a class:list={['nav-link', activeNav === 'home' && 'active']} href="/">
+              <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+              <span>HOME</span>
+            </a>
+            <a class:list={['nav-link', activeNav === 'categories' && 'active']} href="/categories/">
+              <span class="nav-icon"><i class="fa-solid fa-bars"></i></span>
+              <span>CATEGORIES</span>
+            </a>
+            <a class:list={['nav-link', activeNav === 'about' && 'active']} href="/about/">
+              <span class="nav-icon"><i class="fa-solid fa-circle-info"></i></span>
+              <span>ABOUT</span>
+            </a>
+          </nav>
+        </div>
 
         <div class="sidebar-bottom">
           <div class="theme-switcher">
