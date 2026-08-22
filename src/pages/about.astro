@@ -19,10 +19,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     }
 
     .about-intro {
-      margin: 0 0 1.5rem;
+      margin: 0 0 1.1rem;
       color: var(--muted);
       line-height: 1.75;
       max-width: 68ch;
+    }
+
+    .about-intro:last-of-type {
+      margin-bottom: 1.5rem;
     }
 
     .about-grid {
@@ -111,54 +115,61 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         <header class="page-header">
           <h1>About</h1>
           <p>
-            Practical endpoint management content for real-world environments.
+            Practical application management for real-world environments.
           </p>
         </header>
 
         <p class="about-intro">
-          I’m Jeremy Boyes, and I created AppDeploy Guy as a place to document practical
-          knowledge from working with Application Packaging, Software Deployment,
-          Microsoft Intune, SCCM, and PowerShell.
+          I’m Jeremy Boyes, the guy behind AppDeployGuy.
+        </p>
+
+        <p class="about-intro">
+          I started my IT career in Desktop Support, spending years installing software,
+          troubleshooting Windows problems, and figuring out why something that worked on
+          one computer wouldn’t work on another.
+        </p>
+
+        <p class="about-intro">
+          That eventually led me into Application Packaging and Deployment. For more than
+          20 years, I’ve packaged and deployed thousands of applications across enterprise
+          environments and spent plenty of time fixing packages that didn’t work properly.
+        </p>
+
+        <p class="about-intro">
+          I’ve learned just getting an application to install once isn’t enough. It needs
+          to be reliable, consistent, and supportable across clean installs, upgrades and
+          uninstalls.
+        </p>
+
+        <p class="about-intro">
+          Today I help teams package, deploy, and manage Windows applications more
+          reliably using Intune, Configuration Manager (SCCM), PowerShell, and practical
+          automation. My focus is reducing risk, improving consistency, and building
+          deployment processes that work in real environments, not just inside test labs.
+        </p>
+
+        <p class="about-intro">
+          AppDeployGuy is where I share the practical things I’ve learned along the way.
+          Packaging tips and secrets, scripts, troubleshooting advice, and lessons from
+          working with software deployments in real-world Windows environments.
         </p>
 
         <div class="about-grid">
           <section class="about-card">
-            <h2>What this site is for</h2>
-            <p>
-              This blog is being built as a focused technical resource for IT
-              professionals who want clear, usable information without unnecessary fluff.
-            </p>
-            <p>
-              The aim is to publish practical articles, deployment notes, troubleshooting
-              tips, and reusable ideas that help with day-to-day administration and
-              modern endpoint management.
-            </p>
-          </section>
-
-          <section class="about-card">
-            <h2>Topics I cover</h2>
+            <h2>Topics Covered</h2>
             <ul>
-              <li>Application packaging and deployment</li>
+              <li>Application Packaging and Deployment</li>
               <li>Microsoft Intune and endpoint management</li>
-              <li>SCCM / Configuration Manager</li>
+              <li>Configuration Manager (SCCM)</li>
               <li>PowerShell automation</li>
-              <li>Operational tips, lessons learned, and technical walkthroughs</li>
+              <li>Tips and tricks, lessons learned, and step by step tutorials</li>
             </ul>
-          </section>
-
-          <section class="about-card">
-            <h2>Approach</h2>
-            <p>
-              I prefer documentation that is direct, tested, and easy to apply in
-              production. Where possible, posts will focus on practical implementation,
-              not just theory.
-            </p>
           </section>
 
           <section class="about-card">
             <h2>Connect</h2>
             <p>
-              You can also find me on{" "}
+              You can find me on{" "}
               <a href="https://github.com/appdeployguy" target="_blank" rel="noopener noreferrer">GitHub</a>{" "}
               and{" "}
               <a href="https://www.linkedin.com/in/jeremyboyes/" target="_blank" rel="noopener noreferrer">LinkedIn</a>.
